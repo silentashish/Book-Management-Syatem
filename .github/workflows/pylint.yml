@@ -19,12 +19,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install pylint
       
-    - name: Find .pylintrc and run Pylint
+    - name: Run Pylint
       run: |
-        PYLINTRC_PATH=$(find . -name ".pylintrc" -type f -print -quit)
-        if [ -n "$PYLINTRC_PATH" ]; then
-          echo "Found .pylintrc at $PYLINTRC_PATH"
-          pylint --rcfile="$PYLINTRC_PATH" $(git ls-files '*.py')
+        if [ -f "$GITHUB_WORKSPACE/.pylintrc" ]; then
+          echo "Found .pylintrc in the root directory"
+          pylint --rcfile="$GITHUB_WORKSPACE/.pylintrc" $(git ls-files '*.py')
         else
           echo "No .pylintrc found, running Pylint with default settings"
           pylint $(git ls-files '*.py')
