@@ -14,15 +14,17 @@ class DatabaseManager:
 
     def create_tables(self):
         """Create users and books tables."""
-        # Create users and books tables
+        # Create users table with firstname and lastname
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT UNIQUE,
-                password TEXT
+                password TEXT,
+                firstname TEXT,
+                lastname TEXT
             )
-        """
+            """
         )
         self.cursor.execute(
             """
@@ -32,7 +34,7 @@ class DatabaseManager:
                 author TEXT,
                 year INTEGER
             )
-        """
+            """
         )
         self.connection.commit()
 

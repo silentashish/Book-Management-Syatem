@@ -3,6 +3,10 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Item {
+    id: root
+    width: 400
+    height: 600
+
     Column {
         spacing: 20
         anchors.centerIn: parent
@@ -10,12 +14,49 @@ Item {
 
         // Title Label
         Label {
-            text: "Login to Your Account"
+            text: "Create Your Account"
             font.pixelSize: 24
             font.bold: true
             color: "#c9d1d9"
-            verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        // First Name Input
+        TextField {
+            id: firstnameInput
+            placeholderText: "First Name"
+            color: "#c9d1d9"
+            placeholderTextColor: "#6c757d"
+            background: Rectangle {
+                color: "#161b22"
+                radius: 5
+                anchors.fill: parent
+            }
+            leftPadding: 10
+            rightPadding: 10
+            topPadding: 8
+            bottomPadding: 8
+            width: 300
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        // Last Name Input
+        TextField {
+            id: lastnameInput
+            placeholderText: "Last Name"
+            color: "#c9d1d9"
+            placeholderTextColor: "#6c757d"
+            background: Rectangle {
+                color: "#161b22"
+                radius: 5
+                anchors.fill: parent
+            }
+            leftPadding: 10
+            rightPadding: 10
+            topPadding: 8
+            bottomPadding: 8
+            width: 300
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -24,15 +65,18 @@ Item {
             id: usernameInput
             placeholderText: "Username"
             color: "#c9d1d9"
+            placeholderTextColor: "#6c757d"
             background: Rectangle {
                 color: "#161b22"
                 radius: 5
+                anchors.fill: parent
             }
-            padding: 10
-            height: 40
+            leftPadding: 10
+            rightPadding: 10
+            topPadding: 8
+            bottomPadding: 8
             width: 300
             anchors.horizontalCenter: parent.horizontalCenter
-            verticalAlignment: Text.AlignVCenter
         }
 
         // Password Input
@@ -41,36 +85,38 @@ Item {
             placeholderText: "Password"
             echoMode: TextInput.Password
             color: "#c9d1d9"
+            placeholderTextColor: "#6c757d"
             background: Rectangle {
                 color: "#161b22"
                 radius: 5
+                anchors.fill: parent
             }
-            padding: 10
-            height: 40
+            leftPadding: 10
+            rightPadding: 10
+            topPadding: 8
+            bottomPadding: 8
             width: 300
             anchors.horizontalCenter: parent.horizontalCenter
-            verticalAlignment: Text.AlignVCenter
         }
 
-        // Login Button
+        // Signup Button
         Button {
-            text: "Login"
+            text: "Sign Up"
             width: 100
             height: 40
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
-                // Call the UserManager's login method here
-                var loginResult = userManager.login(usernameInput.text, passwordInput.text);
-                if (loginResult) {
+                var signupResult = userManager.signup(usernameInput.text, passwordInput.text, firstnameInput.text, lastnameInput.text);
+                if (signupResult) {
                     // Show success toast
-                    showToast("Login Successful!");
+                    showToast("Signup Successful! Login to continue");
                     usernameInput.text = "";
                     passwordInput.text = "";
-                    // Load the next page or perform any other action
+                    firstnameInput.text = "";
+                    lastnameInput.text = "";
                 } else {
                     // Show failure toast
-                    showToast("Invalid credentials, try again");
-                    passwordInput.text = "";
+                    showToast("Signup Failed! Username may already be taken.");
                 }
             }
             background: Rectangle {
@@ -78,7 +124,7 @@ Item {
                 radius: 5
             }
             contentItem: Text {
-                text: qsTr("Login")
+                text: qsTr("Sign Up")
                 color: "#ffffff"
                 font.bold: true
                 verticalAlignment: Text.AlignVCenter
@@ -87,19 +133,19 @@ Item {
             }
         }
 
-        // Signup Link Text
+        // Back to Login Link
         Text {
-            text: "Don't have an account? Sign Up"
-            color: "#238636" // Link color
+            text: "Already have an account? Login"
+            color: "#238636"
             font.bold: true
-            font.underline: true // Underline the text
+            font.underline: true
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
             MouseArea {
-                anchors.fill: parent // Make the entire text clickable
+                anchors.fill: parent
                 onClicked: {
-                    // Load the signup page
-                    pageLoader.source = "signup_page.qml";
+                    // Load the login page
+                    pageLoader.source = "login_page.qml";
                 }
             }
         }
