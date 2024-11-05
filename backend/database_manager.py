@@ -13,29 +13,53 @@ class DatabaseManager:
         self.create_tables()
 
     def create_tables(self):
-        """Create users and books tables."""
-        # Create users table with firstname and lastname
+        """Create the necessary tables if they don't exist."""
+        # Users table (without is_author field)
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE,
-                password TEXT,
-                firstname TEXT,
-                lastname TEXT
+                username TEXT UNIQUE NOT NULL,
+                password BLOB NOT NULL,
+                firstname TEXT NOT NULL,
+                lastname TEXT NOT NULL,
+                email TEXT NOT NULL
             )
-            """
+        """
         )
+
+        # Authors table
+        self.cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS authors (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                birth_year INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """
+        )
+
+        # Books table
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS books (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT,
-                author TEXT,
-                year INTEGER
+                title TEXT NOT NULL,
+                isbn TEXT UNIQUE,
+                published_year INTEGER,
+                cover_image BLOB,
+                author_id INTEGER,
+                added_by INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (author_id) REFERENCES authors (id),
+                FOREIGN KEY (added_by) REFERENCES users (id)
             )
-            """
+        """
         )
+
         self.connection.commit()
 
     def close_connection(self):
