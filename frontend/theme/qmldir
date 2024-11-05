@@ -1,0 +1,3 @@
+// qmldir
+singleton Colors 1.0 colors.qml
+singleton Size 1.0 size.qml

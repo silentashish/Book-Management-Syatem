@@ -1,16 +1,17 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import 'theme'
 
 ApplicationWindow {
     visible: true
-    width: 800
-    height: 600
+    width: Size.windowHeight
+    height: Size.windowWidth
     title: "Login Page"
-    color: "#0d1117"
+    color: Colors.backgroundColor
 
     Loader {
         id: pageLoader
         anchors.fill: parent
-        source: "login_page.qml" // Load the login page initially
+        source: "pages/dashboard_page.qml"
     }
 }
