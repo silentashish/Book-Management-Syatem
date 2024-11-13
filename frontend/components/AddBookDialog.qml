@@ -6,6 +6,11 @@ import "../theme"
 
 Dialog {
     id: addBookDialog
+    
+    Component.onCompleted: {
+        root.updateAuthorsList()
+    }
+    
     title: "Add New Book"
     width: 400
     height: 500
@@ -65,7 +70,9 @@ Dialog {
         ComboBox {
             id: authorSelect
             width: parent.width - 40
-            model: authorsModel
+            model: ListModel {
+                id: authorsModel
+            }
             textRole: "text"
             valueRole: "value"
 
@@ -77,7 +84,7 @@ Dialog {
             }
 
             contentItem: Text {
-                text: authorSelect.currentValue || "Select Author"
+                text: authorSelect.currentText || "Select Author"
                 color: Colors.secondaryColor
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
@@ -128,19 +135,12 @@ Dialog {
 
     // Expose signals
     signal addBookHandler(string title, string isbn, int year, string imagePath, int authorId)
-
-    // Define the authorsModel ListModel
-    ListModel {
-        id: authorsModel
-        // Authors will be populated here
-    }
-
-    // Function to populate authorsModel
-    function populateAuthors(authors) {
-        authorsModel.clear()
-        authorsModel.append({ text: "Select Author", value: -1 })
-        for (var i = 0; i < authors.length; i++) {
-            authorsModel.append({ text: authors[i].name, value: authors[i].id })
-        }
-    }
+    
+    function updateAuthors(authors) {
+       authorsModel.clear()
+       authorsModel.append({ text: "Select Author", value: -1 })
+       for (var i = 0; i < authors.length; i++) {
+           authorsModel.append({ text: authors[i].name, value: authors[i].id })
+       }
+   }
 }

@@ -39,13 +39,14 @@ class BookManager(QObject):
             print(f"Error adding book: {e}")
             return False
 
-    @pyqtSlot(str, result=list)
+    @pyqtSlot(str, result="QVariantList")
     def search_books(self, query):
         """Search books by title or ISBN."""
         try:
             self.db.cursor.execute(
                 """
-                SELECT b.*, a.name as author_name, u.username as added_by_user
+                SELECT b.title, b.isbn, b.published_year, a.name as author_name, 
+                       b.cover_image, u.username as added_by_user
                 FROM books b
                 LEFT JOIN authors a ON b.author_id = a.id
                 LEFT JOIN users u ON b.added_by = u.id
@@ -53,7 +54,22 @@ class BookManager(QObject):
             """,
                 (f"%{query}%", f"%{query}%"),
             )
-            return self.db.cursor.fetchall()
+            results = self.db.cursor.fetchall()
+
+            # Convert results to a list of dictionaries
+            books = []
+            for row in results:
+                book = {
+                    "title": row[0],
+                    "isbn": row[1],
+                    "published_year": row[2],
+                    "author_name": row[3],
+                    "cover_image": row[4],
+                    "added_by_user": row[5],
+                }
+                books.append(book)
+
+            return books
         except Exception as e:
             print(f"Error searching books: {e}")
             return []

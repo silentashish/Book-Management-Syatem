@@ -14,6 +14,7 @@ Rectangle {
     signal addBookClicked()
     signal addAuthorClicked()
     signal searchRequested(string query)
+    signal searchButtonClicked()
 
     Row {
         anchors.centerIn: parent
@@ -28,6 +29,27 @@ Rectangle {
             placeholderTextColor: Colors.placeholderColor
 
             onAccepted: {
+                searchRequested(searchInput.text)
+            }
+        }
+
+        Button {
+            id: searchButton
+            text: "Search"
+            width: 100
+            height: 40
+            background: Rectangle {
+                radius: Size.buttonRadius
+                color: Colors.primaryColor
+            }
+            contentItem: Text {
+                text: parent.text
+                color: Colors.toastTextColor
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+            onClicked: {
+                searchButtonClicked()
                 searchRequested(searchInput.text)
             }
         }
@@ -68,6 +90,4 @@ Rectangle {
             onClicked: addAuthorClicked()
         }
     }
-
-    // Optional: Add a Search Button if needed
 }

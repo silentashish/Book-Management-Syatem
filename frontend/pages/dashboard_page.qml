@@ -25,8 +25,9 @@ Item {
         // Connect button signals to open dialogs
         onAddBookClicked: addBookDialog.open()
         onAddAuthorClicked: addAuthorDialog.open()
-        onSearchRequested: {
-            refreshBookList(searchSection.searchInput.text)
+        onSearchRequested: function(query) {
+            console.log("Search requested with query:", query);
+            refreshBookList(query);
         }
     }
 
@@ -57,6 +58,7 @@ Item {
     // Add Book Dialog
     AddBookDialog {
         id: addBookDialog
+        anchors.centerIn: parent
 
         // Connect the signal emitted from the dialog to a handler
         onAddBookHandler: function(title, isbn, year, imagePath, authorId) {
@@ -97,6 +99,7 @@ Item {
     // Add Author Dialog
     AddAuthorDialog {
         id: addAuthorDialog
+        anchors.centerIn: parent
 
         // Connect the signal emitted from the dialog to a handler
         onAddAuthorHandler: function(name, birthYear) {
@@ -119,44 +122,40 @@ Item {
         }
     }
 
-    // Function to update authors list in AddBookDialog
+    Rectangle {
+        id: blurBackground
+        anchors.fill: parent
+        color: Qt.rgba(0, 0, 0, 0.5)  // Set the color to semi-transparent white
+        visible: addBookDialog.visible || addAuthorDialog.visible  // Show when any dialog is open
+    }
+
     function updateAuthorsList() {
-        console.log("Updating authors list") // Debug print
-        var authors = authorManager.search_authors("")
-        console.log("Retrieved authors:", JSON.stringify(authors)) // Debug print
+        var authors = authorManager.search_authors("");  // Directly get the list
 
-        addBookDialog.authorSelect.model.clear()
-
-        // Add a placeholder option
-        addBookDialog.authorSelect.model.append({
-            text: "Select Author",
-            value: -1
-        })
-
-        for (var i = 0; i < authors.length; i++) {
-            console.log("Adding author:", authors[i].name) // Debug print
-            addBookDialog.authorSelect.model.append({
-                text: authors[i].name,
-                value: authors[i].id
-            })
+        if (addBookDialog && typeof addBookDialog.updateAuthors === "function") {
+            console.log('Updating authors list');
+            addBookDialog.updateAuthors(authors);
+        } else {
+            console.error("addBookDialog or updateAuthors method is undefined");
         }
     }
 
     // Function to refresh the book list
     function refreshBookList(query) {
-        console.log("Refreshing book list...") // Debug print
-        var books = bookManager.search_books(query) // Fetch books based on query
-        booksModel.clear() // Clear the current model
+        var books = bookManager.search_books(query); 
+        booksModel.clear();
 
         for (var i = 0; i < books.length; i++) {
+            var book = books[i];
+
             booksModel.append({
-                title: books[i].title,
-                isbn: books[i].isbn,
-                publishedYear: books[i].published_year,
-                authorName: books[i].author_name,
-                coverImage: books[i].cover_image,
-                addedByUser: books[i].added_by_user
-            })
+                title: book.title || "Unknown Title",
+                isbn: book.isbn || "Unknown ISBN",
+                publishedYear: book.published_year || 0,
+                authorName: book.author_name || "Unknown Author",
+                coverImage: book.cover_image || "../images/default_cover.png",
+                addedByUser: book.added_by_user || 0
+            });
         }
     }
 
@@ -164,7 +163,7 @@ Item {
         if (typeof bookManager === "undefined" || typeof authorManager === "undefined") {
             console.error("Error: bookManager or authorManager is undefined in QML")
         } else {
-            console.log("bookManager and authorManager are available in QML")
+            refreshBookList("")
         }
     }
 }
