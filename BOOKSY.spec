@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('frontend', 'frontend'), ('backend', 'backend'), ('.env', '.')],
+    datas=[('frontend', 'frontend'), ('backend', 'backend'), ('resources', 'resources'), ('.env', '.')],
     hiddenimports=['watchdog.observers', 'watchdog.events'],
     hookspath=[],
     hooksconfig={},
@@ -47,5 +47,5 @@ app = BUNDLE(
     coll,
     name='BOOKSY.app',
     icon='resources/AppIcon.icns',
-    bundle_identifier=None,
+    bundle_identifier='com.yourdomain.booksy',
 )
