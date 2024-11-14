@@ -27,10 +27,10 @@ def get_image_path_from_data(image_data, image_id):
 class BookManager(QObject):
     """Class for handling book management tasks."""
 
-    def __init__(self):
+    def __init__(self, db_path):
         """Initialize the BookManager."""
         super().__init__()
-        self.db = DatabaseManager()
+        self.db = DatabaseManager(db_path)
 
     @pyqtSlot(str, str, int, str, int, int, result=bool)
     def add_book(

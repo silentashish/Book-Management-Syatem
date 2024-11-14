@@ -1,0 +1,46 @@
+2024-11-13 19:52:29,824 - INFO - Logging initialized.
+2024-11-13 19:52:29,965 - DEBUG - Loading QML file from file:///Users/agautam/Academic/521-Programming/project/frontend/main.qml
+2024-11-13 19:52:30,409 - INFO - Application started successfully.
+2024-11-13 19:53:07,838 - INFO - Application exited with code 0.
+2024-11-13 20:00:13,476 - INFO - Logging initialized.
+2024-11-13 20:00:13,570 - ERROR - Default database not found at /Users/agautam/Academic/521-Programming/project/database/booksy.db
+2024-11-13 20:00:13,570 - ERROR - An unexpected error occurred while running the application.
+Traceback (most recent call last):
+  File "/Users/agautam/Academic/521-Programming/project/main.py", line 86, in run_app
+    userManager = UserManager(get_database_path())
+TypeError: __init__() takes 1 positional argument but 2 were given
+2024-11-13 20:04:18,372 - INFO - Logging initialized.
+2024-11-13 20:04:18,475 - ERROR - Default database not found at /Users/agautam/Academic/521-Programming/project/database/booksy.db
+2024-11-13 20:04:18,475 - ERROR - An unexpected error occurred while running the application.
+Traceback (most recent call last):
+  File "/Users/agautam/Academic/521-Programming/project/main.py", line 86, in run_app
+    userManager = UserManager(get_database_path())
+  File "/Users/agautam/Academic/521-Programming/project/backend/user_manager.py", line 17, in __init__
+    self.db = DatabaseManager(db_name)
+  File "/Users/agautam/Academic/521-Programming/project/backend/database_manager.py", line 14, in __init__
+    logging.info(f"Connected to database at {self.db_path}")
+AttributeError: 'DatabaseManager' object has no attribute 'db_path'
+2024-11-13 20:04:45,644 - INFO - Logging initialized.
+2024-11-13 20:04:45,751 - ERROR - An unexpected error occurred while running the application.
+Traceback (most recent call last):
+  File "/Users/agautam/Academic/521-Programming/project/main.py", line 86, in run_app
+    userManager = UserManager(get_database_path())
+  File "/Users/agautam/Academic/521-Programming/project/backend/user_manager.py", line 17, in __init__
+    self.db = DatabaseManager(db_name)
+  File "/Users/agautam/Academic/521-Programming/project/backend/database_manager.py", line 14, in __init__
+    logging.info(f"Connected to database at {self.db_path}")
+AttributeError: 'DatabaseManager' object has no attribute 'db_path'
+2024-11-13 20:05:39,830 - INFO - Logging initialized.
+2024-11-13 20:05:39,913 - INFO - Connected to database at /Users/agautam/Library/Application Support/BOOKSY/booksy.db
+2024-11-13 20:05:39,915 - INFO - Connected to database at /Users/agautam/Library/Application Support/BOOKSY/booksy.db
+2024-11-13 20:05:39,915 - INFO - Connected to database at /Users/agautam/Library/Application Support/BOOKSY/booksy.db
+2024-11-13 20:05:39,916 - DEBUG - Loading QML file from file:///Users/agautam/Academic/521-Programming/project/frontend/main.qml
+2024-11-13 20:05:40,115 - INFO - Application started successfully.
+2024-11-13 20:08:18,717 - INFO - Application exited with code 0.
+2024-11-13 20:17:59,228 - INFO - Logging initialized.
+2024-11-13 20:17:59,324 - INFO - Connected to database at /Users/agautam/Library/Application Support/BOOKSY/booksy.db
+2024-11-13 20:17:59,324 - INFO - Connected to database at /Users/agautam/Library/Application Support/BOOKSY/booksy.db
+2024-11-13 20:17:59,325 - INFO - Connected to database at /Users/agautam/Library/Application Support/BOOKSY/booksy.db
+2024-11-13 20:17:59,325 - DEBUG - Loading QML file from file:///Users/agautam/Academic/521-Programming/project/frontend/main.qml
+2024-11-13 20:17:59,501 - INFO - Application started successfully.
+2024-11-13 20:18:24,452 - INFO - Application exited with code 0.

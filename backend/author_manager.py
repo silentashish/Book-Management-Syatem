@@ -7,10 +7,10 @@ from backend.database_manager import DatabaseManager
 class AuthorManager(QObject):
     """Class for handling author management tasks."""
 
-    def __init__(self):
+    def __init__(self, db_path):
         """Initialize the AuthorManager."""
         super().__init__()
-        self.db = DatabaseManager()
+        self.db = DatabaseManager(db_path)
 
     @pyqtSlot(str, int, result=bool)
     def add_author(self, name, birth_year):

@@ -1,16 +1,23 @@
 """Module for managing database operations."""
 
 import sqlite3
+import logging
 
 
 class DatabaseManager:
     """Class for handling database management tasks."""
 
-    def __init__(self, db_name="book_management.db"):
+    def __init__(self, db_path="book_management.db"):
         """Initialize the DatabaseManager."""
-        self.connection = sqlite3.connect(db_name)
-        self.cursor = self.connection.cursor()
-        self.create_tables()
+        try:
+            self.db_path = db_path
+            self.connection = sqlite3.connect(db_path)
+            logging.info(f"Connected to database at {self.db_path}")
+            self.cursor = self.connection.cursor()
+            self.create_tables()
+        except sqlite3.Error as e:
+            logging.error(f"Unable to connect to database: {e}")
+            raise e
 
     def create_tables(self):
         """Create the necessary tables if they don't exist."""

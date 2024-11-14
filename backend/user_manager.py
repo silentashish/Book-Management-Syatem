@@ -11,10 +11,10 @@ from PyQt6.QtCore import QSettings
 class UserManager(QObject):
     """Class for handling user management tasks."""
 
-    def __init__(self):
+    def __init__(self, db_name):
         """Initialize the UserManager."""
         super().__init__()
-        self.db = DatabaseManager()
+        self.db = DatabaseManager(db_name)
 
     def _hash_password(self, password: str) -> bytes:
         """Hash a password using bcrypt."""
