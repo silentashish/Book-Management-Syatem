@@ -1,8 +1,8 @@
-// frontend/components/AddBookDialog.qml
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Dialogs 6.2  // Adjust version based on your Qt installation
+import QtQuick.Dialogs 6.2
 import "../theme"
+import QtQuick.Controls.Material 2.15
 
 Dialog {
     id: addBookDialog
@@ -12,21 +12,21 @@ Dialog {
     }
     
     title: "Add New Book"
-    width: 400
-    height: 500
+    width: Size.dialogWidth
+    height: Size.bookDialogHeight
     modal: true
-    standardButtons: Dialog.Ok | Dialog.Cancel
+    standardButtons: Dialog.NoButton
 
     background: Rectangle {
         color: Colors.backgroundColor
         border.color: Colors.primaryColor
-        border.width: 1
+        border.width: Size.borderWidth
         radius: Size.buttonRadius
     }
 
     header: Rectangle {
         color: Colors.primaryColor
-        height: 40
+        height: Size.headerHeight
         width: parent.width
 
         Text {
@@ -48,6 +48,9 @@ Dialog {
             placeholderText: "Book Title"
             color: Colors.secondaryColor
             placeholderTextColor: Colors.placeholderColor
+            Material.accent: Colors.secondaryColor
+            Material.background: Colors.backgroundColor
+            Material.theme: Material.Dark
         }
 
         TextField {
@@ -56,6 +59,9 @@ Dialog {
             placeholderText: "ISBN"
             color: Colors.secondaryColor
             placeholderTextColor: Colors.placeholderColor
+            Material.accent: Colors.secondaryColor
+            Material.background: Colors.backgroundColor
+            Material.theme: Material.Dark
         }
 
         TextField {
@@ -65,21 +71,30 @@ Dialog {
             color: Colors.secondaryColor
             placeholderTextColor: Colors.placeholderColor
             validator: IntValidator { bottom: 1000; top: 9999 }
+            Material.accent: Colors.secondaryColor
+            Material.background: Colors.backgroundColor
+            Material.theme: Material.Dark
         }
 
         ComboBox {
             id: authorSelect
             width: parent.width - 40
+            height: Size.buttonHeight
+            padding: Size.inputRadius
             model: ListModel {
                 id: authorsModel
             }
             textRole: "text"
             valueRole: "value"
 
+            Material.accent: Colors.secondaryColor
+            Material.background: Colors.backgroundColor
+            Material.theme: Material.Dark
+
             background: Rectangle {
                 color: Colors.backgroundColor
                 border.color: Colors.primaryColor
-                border.width: 1
+                border.width: Size.borderWidth
                 radius: Size.buttonRadius
             }
 
@@ -114,11 +129,64 @@ Dialog {
             width: parent.width - 40
             height: 150
             fillMode: Image.PreserveAspectFit
+            source: fileDialog.selectedFile
             visible: source.toString() !== ""
         }
     }
 
-    // File Dialog for Cover Image
+    footer: Rectangle {  
+        color: "transparent"
+        border.color: Colors.primaryColor
+        border.width: Size.borderWidth
+        height: Size.headerHeight
+        width: parent.width
+        radius: Size.buttonRadius
+
+        Row {
+            anchors.centerIn: parent
+            spacing: Size.columnSpacing
+
+            Button {
+                text: qsTr("Cancel")
+                width: Size.buttonWidth / 2
+                height: Size.buttonHeight
+                onClicked: addBookDialog.close()
+
+                background: Rectangle {
+                    radius: Size.buttonRadius
+                    border.width: 2
+                    border.color: Colors.primaryColor
+                    color: "transparent"
+                }
+                
+                contentItem: Text {
+                    text: parent.text
+                    color: Colors.toastTextColor  
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    anchors.centerIn: parent 
+                }
+            }
+
+            Button {
+                text: qsTr("OK")
+                width: Size.buttonWidth / 2
+                height: Size.buttonHeight
+                onClicked: addBookDialog.accepted()
+                background: Rectangle {
+                    color: Colors.primaryColor
+                    radius: Size.buttonRadius
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: Colors.toastTextColor
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
+    }
+
     FileDialog {
         id: fileDialog
         title: "Choose a cover image"
@@ -129,11 +197,9 @@ Dialog {
     }
 
     onAccepted: {
-        // Emit signals to handle book addition
         addBookHandler(titleInput.text, isbnInput.text, yearInput.text, selectedCoverImage.source, authorSelect.currentValue)
     }
 
-    // Expose signals
     signal addBookHandler(string title, string isbn, int year, string imagePath, int authorId)
     
     function updateAuthors(authors) {

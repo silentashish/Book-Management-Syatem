@@ -2,6 +2,26 @@
 
 from PyQt6.QtCore import QObject, pyqtSlot
 from backend.database_manager import DatabaseManager
+import tempfile
+from PyQt6.QtCore import QSettings
+
+
+def get_image_path_from_data(image_data, image_id):
+    """Save image data to a temporary file and return the file path."""
+    if not image_data:
+        return None
+
+    # Create a temporary file path
+    temp_file = tempfile.NamedTemporaryFile(
+        delete=False, suffix=f"_book_cover_{image_id}.png"
+    )
+    temp_file_path = temp_file.name
+
+    # Write the image data to the file
+    with open(temp_file_path, "wb") as file:
+        file.write(image_data)
+
+    return temp_file_path
 
 
 class BookManager(QObject):
@@ -46,27 +66,35 @@ class BookManager(QObject):
             self.db.cursor.execute(
                 """
                 SELECT b.title, b.isbn, b.published_year, a.name as author_name, 
-                       b.cover_image, u.username as added_by_user
+                    b.cover_image, u.username as added_by_user, u.id as added_by_user_id, b.id
                 FROM books b
                 LEFT JOIN authors a ON b.author_id = a.id
                 LEFT JOIN users u ON b.added_by = u.id
                 WHERE b.title LIKE ? OR b.isbn LIKE ?
-            """,
+                """,
                 (f"%{query}%", f"%{query}%"),
             )
             results = self.db.cursor.fetchall()
 
-            # Convert results to a list of dictionaries
+            # Fetch the current user's ID
+            settings = QSettings("MyApp", "UserData")
+            userId = settings.value("id")
+
             books = []
             for row in results:
+                # Create temp image path
+                image_path = get_image_path_from_data(row[4], row[0])
                 book = {
                     "title": row[0],
                     "isbn": row[1],
                     "published_year": row[2],
                     "author_name": row[3],
-                    "cover_image": row[4],
+                    "cover_image": image_path,
                     "added_by_user": row[5],
+                    "added_by_author": str(userId) == str(row[6]),
+                    "bookId": row[7],
                 }
+                print(str(userId) == str(row[6]))
                 books.append(book)
 
             return books
@@ -93,8 +121,10 @@ class BookManager(QObject):
         try:
             # Handle cover image
             cover_image = None
-            if cover_image_path:
-                with open(cover_image_path, "rb") as file:
+            if cover_image_path and cover_image_path.startswith("file://"):
+                # Remove the file:// prefix
+                clean_path = cover_image_path[7:]
+                with open(clean_path, "rb") as file:
                     cover_image = file.read()
 
             if cover_image:

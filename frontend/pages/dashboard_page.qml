@@ -29,6 +29,11 @@ Item {
             console.log("Search requested with query:", query);
             refreshBookList(query);
         }
+        onLogoutClicked: function(){
+            if(userManager.logout()){
+                pageLoader.source = "pages/login_page.qml"
+            }
+        }
     }
 
     // Books List
@@ -46,6 +51,14 @@ Item {
             authorName: model.authorName
             coverImage: model.coverImage
             addedByUser: model.addedByUser
+            isAuthor: model.isAuthor
+            bookId: model.bookId
+
+            onDeleteBook: function(id){
+                if(bookManager.delete_book(id)){
+                    refreshBookList("")
+                }
+            }
         }
     }
 
@@ -76,13 +89,17 @@ Item {
             var publishedYear = parseInt(year) || 0
             var imagePathClean = imagePath.startsWith("qrc:/") ? imagePath.substring(4) : imagePath
 
+            var userDataString = userManager.get_user_data();
+            var userData = JSON.parse(userDataString);
+            var userId = userData.id;
+
             var result = bookManager.add_book(
                 title,
                 isbn,
                 publishedYear,
                 imagePathClean,
                 authorId,
-                1  // TODO: Replace with actual logged-in user ID
+                parseInt(userId)
             )
 
             if (result) {
@@ -147,14 +164,15 @@ Item {
 
         for (var i = 0; i < books.length; i++) {
             var book = books[i];
-
             booksModel.append({
                 title: book.title || "Unknown Title",
                 isbn: book.isbn || "Unknown ISBN",
                 publishedYear: book.published_year || 0,
                 authorName: book.author_name || "Unknown Author",
-                coverImage: book.cover_image || "../images/default_cover.png",
-                addedByUser: book.added_by_user || 0
+                coverImage: book.cover_image,
+                addedByUser: book.added_by_user || 0,
+                isAuthor: book.added_by_author,
+                bookId: book.bookId
             });
         }
     }

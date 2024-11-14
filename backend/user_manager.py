@@ -1,9 +1,11 @@
 """Module for managing user-related operations."""
 
-from backend.database_manager import DatabaseManager
+import json
 import sqlite3
+from backend.database_manager import DatabaseManager
 from PyQt6.QtCore import pyqtSlot, QObject
 import bcrypt
+from PyQt6.QtCore import QSettings
 
 
 class UserManager(QObject):
@@ -29,11 +31,12 @@ class UserManager(QObject):
 
     @pyqtSlot(str, str, result=bool)
     def login(self, username, password):
-        """Log in a user with the given username and password."""
+        """Log in a user and store their information if successful."""
         try:
-            # Get the stored hashed password for the username
+            # Get the stored hashed password and user information for the username
             self.db.cursor.execute(
-                "SELECT password FROM users WHERE username = ?", (username,)
+                "SELECT password, id, username, firstname, lastname, email FROM users WHERE username = ?",
+                (username,),
             )
             result = self.db.cursor.fetchone()
 
@@ -43,14 +46,34 @@ class UserManager(QObject):
             stored_password = result[0]
 
             # Verify the password
-            return self._check_password(password, stored_password)
+            if not self._check_password(password, stored_password):
+                return False  # Password verification failed
+
+            # Store user information using QSettings
+            settings = QSettings("MyApp", "UserData")  # Replace with your app name
+            settings.setValue("id", result[1])
+            settings.setValue("username", result[2])
+            settings.setValue("firstname", result[3])
+            settings.setValue("lastname", result[4])
+            settings.setValue("email", result[5])
+
+            return True  # User information stored successfully
+
         except Exception as e:
-            print(f"Login error: {e}")
+            print(f"Error during login and store: {e}")
             return False
 
+    @pyqtSlot(result=bool)
     def logout(self):
-        """Handle logout logic if needed."""
-        # Logic for logout can be implemented here
+        """Handle logout logic by clearing user data."""
+        try:
+            settings = QSettings("MyApp", "UserData")
+            settings.clear()
+            return True
+
+        except Exception as e:
+            print(f"Error during logout: {e}")
+            return False
 
     @pyqtSlot(str, str, str, str, str, result=bool)
     def signup(self, username, password, firstname, lastname, email):
@@ -77,3 +100,20 @@ class UserManager(QObject):
         except Exception as e:
             print(f"An error occurred during signup: {e}")
             return False  # Signup failed due to an unexpected error
+
+    @pyqtSlot(result=bool)
+    def is_user_logged_in(self) -> bool:
+        """Check if user data exists in QSettings."""
+        settings = QSettings("MyApp", "UserData")
+        return settings.contains("id")
+
+    @pyqtSlot(result=str)
+    def get_user_data(self) -> str:
+        """Check if user data exists in QSettings."""
+        settings = QSettings("MyApp", "UserData")
+        data = {
+            "firstName": settings.value("firstname"),
+            "lastName": settings.value("lastname"),
+            "id": settings.value("id"),
+        }
+        return json.dumps(data)

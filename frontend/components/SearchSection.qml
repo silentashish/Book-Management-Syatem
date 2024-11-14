@@ -2,92 +2,169 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Controls.Material 2.15
 import "../theme"
 
 Rectangle {
     id: searchSection
     width: parent.width
-    height: 60
+    height: 80
     color: Colors.backgroundColor
 
-    // Signals to communicate button clicks
     signal addBookClicked()
     signal addAuthorClicked()
     signal searchRequested(string query)
     signal searchButtonClicked()
+    signal logoutClicked()
 
-    Row {
-        anchors.centerIn: parent
-        spacing: 10
+    RowLayout {
+        anchors.fill: parent
+        spacing: 20
 
-        TextField {
-            id: searchInput
-            width: 300
-            height: 40
-            placeholderText: "Search books..."
-            color: Colors.secondaryColor
-            placeholderTextColor: Colors.placeholderColor
+        // Slightly increased left padding
+        Item {
+            Layout.preferredWidth: 15
+        }
 
-            onAccepted: {
-                searchRequested(searchInput.text)
+        RowLayout {
+            spacing: 10
+            Layout.alignment: Qt.AlignVCenter
+
+            TextField {
+                id: searchInput
+                width: parent.width * 0.5  // Sets width to 50% of parent width
+                height: 40
+                placeholderText: "Search books..."
+                color: Colors.secondaryColor
+                placeholderTextColor: Colors.placeholderColor
+                Material.accent: Colors.secondaryColor
+                Material.background: Colors.backgroundColor
+                Material.theme: Material.Dark
+
+                onAccepted: {
+                    searchRequested(searchInput.text)
+                }
+            }
+
+            Button {
+                id: searchButton
+                text: "Search"
+                width: 100
+                height: 40
+                background: Rectangle {
+                    radius: Size.buttonRadius
+                    color: Colors.primaryColor
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: Colors.toastTextColor
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    anchors.centerIn: parent
+                }
+                onClicked: {
+                    searchButtonClicked()
+                    searchRequested(searchInput.text)
+                }
             }
         }
 
-        Button {
-            id: searchButton
-            text: "Search"
-            width: 100
-            height: 40
-            background: Rectangle {
-                radius: Size.buttonRadius
-                color: Colors.primaryColor
+        Item {
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            spacing: 10
+            Layout.alignment: Qt.AlignVCenter
+
+            Button {
+                id: addBookButton
+                text: "Add Book"
+                width: 100
+                height: 40
+                background: Rectangle {
+                    radius: Size.buttonRadius
+                    color: Colors.primaryColor
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: Colors.toastTextColor
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    anchors.centerIn: parent
+                }
+                onClicked: addBookClicked()
             }
-            contentItem: Text {
-                text: parent.text
-                color: Colors.toastTextColor
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-            onClicked: {
-                searchButtonClicked()
-                searchRequested(searchInput.text)
+
+            Button {
+                id: addAuthorButton
+                text: "Add Author"
+                width: 100
+                height: 40
+                background: Rectangle {
+                    radius: Size.buttonRadius
+                    color: Colors.primaryColor
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: Colors.toastTextColor
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    anchors.centerIn: parent
+                }
+                onClicked: addAuthorClicked()
             }
         }
 
-        Button {
-            id: addBookButton
-            text: "Add Book"
-            width: 100
-            height: 40
-            background: Rectangle {
-                radius: Size.buttonRadius
-                color: Colors.primaryColor
-            }
-            contentItem: Text {
-                text: parent.text
-                color: Colors.toastTextColor
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-            onClicked: addBookClicked()
+        Item {
+            Layout.fillWidth: true
         }
 
-        Button {
-            id: addAuthorButton
-            text: "Add Author"
-            width: 100
-            height: 40
-            background: Rectangle {
-                radius: Size.buttonRadius
-                color: Colors.primaryColor
+        RowLayout {
+            spacing: 10
+            Layout.alignment: Qt.AlignVCenter
+
+            Text {
+                id: nameDisplay
+                color: Colors.secondaryColor
+                text: ""
+                font.pointSize: 14
             }
-            contentItem: Text {
-                text: parent.text
-                color: Colors.toastTextColor
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
+
+            Button {
+                id: logoutButton
+                text: "Logout"
+                width: 100
+                height: 40
+                background: Rectangle {
+                    radius: Size.buttonRadius
+                    color: Colors.primaryColor
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: Colors.toastTextColor
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    anchors.centerIn: parent
+                }
+                onClicked: logoutClicked()
             }
-            onClicked: addAuthorClicked()
+        }
+
+        // Slightly increased right padding
+        Item {
+            Layout.preferredWidth: 15
+        }
+    }
+
+    Component.onCompleted: {
+        if (typeof bookManager === "undefined" || typeof authorManager === "undefined") {
+            console.error("Error: bookManager or authorManager is undefined in QML");
+        } else {
+            var userDataString = userManager.get_user_data();
+            var userData = JSON.parse(userDataString);
+            var fullname = userData.firstName + " " + userData.lastName;
+            nameDisplay.text = fullname;
         }
     }
 }

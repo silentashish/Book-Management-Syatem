@@ -7,11 +7,11 @@ import "../theme"
 Rectangle {
     id: bookItem
     width: parent.width
-    height: 120
+    height: 140
     color: Colors.backgroundColor
     border.color: Colors.primaryColor
     border.width: 1
-    radius: Size.buttonRadius  // Use Size for consistency
+    radius: Size.buttonRadius
 
     // Define properties corresponding to model roles
     property string title: ""
@@ -20,15 +20,17 @@ Rectangle {
     property string authorName: ""
     property string coverImage: ""
     property int addedByUser: 0
+    property bool isAuthor: false
+    property int bookId: 0
 
-    // Existing property
-    property bool isAuthor: false // Will be set based on user role
+    signal deleteBook(int id)
 
-    Row {
+    RowLayout {
         anchors.fill: parent
         anchors.margins: 10
-        spacing: 10
+        spacing: 15
 
+        // Cover Image Section
         Rectangle {
             width: 100
             height: parent.height - 20
@@ -45,62 +47,55 @@ Rectangle {
             }
         }
 
-        Column {
+        // Book Details Section
+        ColumnLayout {
             spacing: 5
+            Layout.fillWidth: true
 
             Text {
                 text: title
                 color: Colors.secondaryColor
                 font.pixelSize: Size.fontSizeLarge
                 font.bold: true
+                Layout.alignment: Qt.AlignLeft
             }
 
             Text {
                 text: "By: " + authorName
                 color: Colors.secondaryColor
                 font.pixelSize: Size.fontSizeNormal
+                Layout.alignment: Qt.AlignLeft
             }
 
             Text {
                 text: "ISBN: " + isbn
                 color: Colors.secondaryColor
                 font.pixelSize: Size.fontSizeSmall
+                Layout.alignment: Qt.AlignLeft
             }
 
             Text {
                 text: "Published: " + publishedYear
                 color: Colors.secondaryColor
                 font.pixelSize: Size.fontSizeSmall
+                Layout.alignment: Qt.AlignLeft
             }
         }
 
-        // Edit and Delete buttons (only visible for authors)
-        Row {
-            visible: isAuthor
-            spacing: 5
+        // Spacer to push buttons to the right
+        Item {
+            Layout.fillWidth: true
+        }
 
-            Button {
-                text: "Edit"
-                width: 60
-                height: 30
-                background: Rectangle {
-                    color: Colors.primaryColor
-                    radius: Size.buttonRadius
-                }
-                contentItem: Text {
-                    text: parent.text
-                    color: Colors.toastTextColor
-                    anchors.centerIn: parent
-                    font.pixelSize: Size.fontSizeSmall
-                }
-                onClicked: {
-                    console.log("Edit button clicked for book:", title)
-                }
-            }
+        // Edit and Delete Buttons Section
+        RowLayout {
+            spacing: 10
+            Layout.alignment: Qt.AlignVCenter
+            visible: isAuthor
 
             Button {
                 text: "Delete"
-                width: 60
+                width: 100
                 height: 30
                 background: Rectangle {
                     color: Colors.primaryColor
@@ -113,7 +108,9 @@ Rectangle {
                     font.pixelSize: Size.fontSizeSmall
                 }
                 onClicked: {
-                    console.log("Delete button clicked for book:", title)
+                    if(bookId !== 0){
+                        deleteBook(bookId)
+                    }
                 }
             }
         }

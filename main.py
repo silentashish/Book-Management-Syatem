@@ -28,6 +28,7 @@ def run_app():
     """Run the Qt application."""
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
+    app.setApplicationName("MyApp")
 
     # Load QML and create the app window
     engine = QQmlApplicationEngine()

@@ -129,8 +129,21 @@ Item {
         }
     }
 
+    Component.onCompleted: {
+        if (typeof bookManager === "undefined" || typeof authorManager === "undefined") {
+            console.error("Error: bookManager or authorManager is undefined in QML")
+        } else {
+            if(userManager.is_user_logged_in())
+            {
+                pageLoader.source = "pages/dashboard_page.qml";
+            }
+            
+        }
+    }
+
     // Add Toast component
     Toast {
         id: toast
     }
+    
 }

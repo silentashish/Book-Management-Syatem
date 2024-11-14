@@ -12,4 +12,5 @@ QtObject {
     readonly property color successColor: "#4CAF50"  // Green
     readonly property color errorColor: "#F44336"    // Red
     readonly property color logoBorderColor: primaryColor  // Using primary color for border
-} 
+    readonly property color grayColor: "#B0B0B0"  // New gray color
+}

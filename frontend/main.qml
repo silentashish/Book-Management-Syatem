@@ -12,6 +12,6 @@ ApplicationWindow {
     Loader {
         id: pageLoader
         anchors.fill: parent
-        source: "pages/dashboard_page.qml"
+        source: "pages/login_page.qml"
     }
 }
