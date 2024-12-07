@@ -44,3 +44,33 @@ AttributeError: 'DatabaseManager' object has no attribute 'db_path'
 2024-11-13 20:17:59,325 - DEBUG - Loading QML file from file:///Users/agautam/Academic/521-Programming/project/frontend/main.qml
 2024-11-13 20:17:59,501 - INFO - Application started successfully.
 2024-11-13 20:18:24,452 - INFO - Application exited with code 0.
+2024-12-07 12:44:23,864 - INFO - Logging initialized.
+2024-12-07 12:44:24,054 - INFO - Attempting to connect to database at /Users/agautam/Library/Application Support/BOOKSY/booksy.db
+2024-12-07 12:44:24,054 - INFO - Database connection established successfully
+2024-12-07 12:44:24,054 - INFO - Creating database tables if they don't exist
+2024-12-07 12:44:24,055 - INFO - Database tables created/verified successfully
+2024-12-07 12:44:24,056 - INFO - UserManager initialized
+2024-12-07 12:44:24,056 - INFO - Attempting to connect to database at /Users/agautam/Library/Application Support/BOOKSY/booksy.db
+2024-12-07 12:44:24,056 - INFO - Database connection established successfully
+2024-12-07 12:44:24,056 - INFO - Creating database tables if they don't exist
+2024-12-07 12:44:24,056 - INFO - Database tables created/verified successfully
+2024-12-07 12:44:24,056 - INFO - BookManager initialized successfully
+2024-12-07 12:44:24,056 - INFO - Attempting to connect to database at /Users/agautam/Library/Application Support/BOOKSY/booksy.db
+2024-12-07 12:44:24,056 - INFO - Database connection established successfully
+2024-12-07 12:44:24,056 - INFO - Creating database tables if they don't exist
+2024-12-07 12:44:24,056 - INFO - Database tables created/verified successfully
+2024-12-07 12:44:24,056 - INFO - AuthorManager initialized successfully
+2024-12-07 12:44:24,057 - DEBUG - Loading QML file from file:///Users/agautam/Academic/521-Programming/project/frontend/main.qml
+2024-12-07 12:44:25,010 - INFO - Searching books with query: 
+2024-12-07 12:44:25,013 - DEBUG - Successfully saved image to temporary file: /var/folders/mz/vkshcxj547bbx9s3sbzpt5500000gp/T/tmpqzv9x88n_book_cover_Some Book.png
+2024-12-07 12:44:25,013 - INFO - Found 1 matching books
+2024-12-07 12:44:25,013 - INFO - Searching authors with query: 
+2024-12-07 12:44:25,014 - INFO - Found 3 matching authors
+2024-12-07 12:44:25,066 - INFO - Application started successfully.
+2024-12-07 12:46:06,794 - INFO - Attempting login for user: silentashish
+2024-12-07 12:46:07,056 - INFO - User silentashish logged in successfully
+2024-12-07 12:46:07,061 - INFO - Searching books with query: 
+2024-12-07 12:46:07,063 - DEBUG - Successfully saved image to temporary file: /var/folders/mz/vkshcxj547bbx9s3sbzpt5500000gp/T/tmpd_2e0x3t_book_cover_Some Book.png
+2024-12-07 12:46:07,063 - INFO - Found 1 matching books
+2024-12-07 12:46:07,064 - INFO - Searching authors with query: 
+2024-12-07 12:46:07,064 - INFO - Found 3 matching authors

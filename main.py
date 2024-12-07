@@ -1,7 +1,6 @@
 import os
 import sys
 import logging
-import shutil
 import sqlite3
 from pathlib import Path
 from PyQt6.QtWidgets import QApplication, QMessageBox
@@ -15,9 +14,11 @@ from dotenv import load_dotenv
 
 # Initialize logging
 def setup_logging():
+    """Configure application-wide logging to both file and console output.
+    Creates a logs directory and writes to app.log file."""
     try:
+        # Determine base path (handles both PyInstaller and normal execution)
         if getattr(sys, "frozen", False):
-            # PyInstaller creates a temp folder and stores path in _MEIPASS
             base_path = sys._MEIPASS
         else:
             base_path = os.path.abspath(".")
@@ -45,7 +46,9 @@ setup_logging()
 
 
 def get_resource_path(relative_path):
-    """Get absolute path to resource, works for dev and for PyInstaller"""
+    """Get absolute path to resource, works for dev and for PyInstaller.
+    Ensures resources (like QML files) can be found in both development
+    and compiled environments."""
     try:
         base_path = sys._MEIPASS
     except AttributeError:
@@ -55,13 +58,15 @@ def get_resource_path(relative_path):
 
 
 def get_database_path():
-    """Get the absolute path to the database file in Application Support."""
+    """Set up the SQLite database in the user's Application Support directory.
+    Creates the database and necessary tables if they don't exist."""
+    # Define the application support directory path for macOS
     app_support_dir = Path.home() / "Library" / "Application Support" / "BOOKSY"
     app_support_dir.mkdir(parents=True, exist_ok=True)
     db_path = app_support_dir / "booksy.db"
 
     if not db_path.exists():
-        # Create a new database
+        # Initialize database schema with tables for users, authors, and books
         try:
             conn = sqlite3.connect(db_path)
             cursor = conn.cursor()
@@ -107,21 +112,23 @@ def get_database_path():
 
 
 def run_app():
-    """Run the Qt application."""
+    """Initialize and run the main Qt application.
+    Sets up the QML engine, managers, and loads the main UI."""
     try:
+        # Initialize Qt application with Fusion style
         app = QApplication(sys.argv)
         app.setStyle("Fusion")
         app.setApplicationName("BOOKSY")
 
-        # Load QML and create the app window
+        # Set up QML engine and create manager instances
         engine = QQmlApplicationEngine()
 
-        # Create instances of managers with the database path
+        # Initialize database managers for users, books, and authors
         userManager = UserManager(get_database_path())
         bookManager = BookManager(get_database_path())
         authorManager = AuthorManager(get_database_path())
 
-        # Set context properties before loading QML
+        # Make managers available to QML
         engine.rootContext().setContextProperty("userManager", userManager)
         engine.rootContext().setContextProperty("bookManager", bookManager)
         engine.rootContext().setContextProperty("authorManager", authorManager)
@@ -151,7 +158,10 @@ def run_app():
         sys.exit(1)
 
 
+# Main entry point
 if __name__ == "__main__":
+    """Application entry point with error handling.
+    Initializes environment variables and starts the main application loop."""
     try:
         exit_code = run_app()
         logging.info(f"Application exited with code {exit_code}.")

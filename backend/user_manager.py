@@ -1,6 +1,7 @@
 """Module for managing user-related operations."""
 
 import json
+import logging
 import sqlite3
 from backend.database_manager import DatabaseManager
 from PyQt6.QtCore import pyqtSlot, QObject
@@ -15,6 +16,7 @@ class UserManager(QObject):
         """Initialize the UserManager."""
         super().__init__()
         self.db = DatabaseManager(db_name)
+        logging.info("UserManager initialized")
 
     def _hash_password(self, password: str) -> bytes:
         """Hash a password using bcrypt."""
@@ -31,9 +33,18 @@ class UserManager(QObject):
 
     @pyqtSlot(str, str, result=bool)
     def login(self, username, password):
-        """Log in a user and store their information if successful."""
+        """Log in a user and store their information if successful.
+
+        Args:
+            username: User's login name
+            password: User's plain text password
+
+        Returns:
+            bool: True if login successful, False otherwise
+        """
         try:
-            # Get the stored hashed password and user information for the username
+            logging.info(f"Attempting login for user: {username}")
+            # Query database for user credentials and profile information
             self.db.cursor.execute(
                 "SELECT password, id, username, firstname, lastname, email FROM users WHERE username = ?",
                 (username,),
@@ -41,26 +52,30 @@ class UserManager(QObject):
             result = self.db.cursor.fetchone()
 
             if result is None:
-                return False  # Username not found
+                logging.warning(f"Login failed: User {username} not found")
+                return False
 
             stored_password = result[0]
 
-            # Verify the password
+            # Verify the password using bcrypt
             if not self._check_password(password, stored_password):
-                return False  # Password verification failed
+                logging.warning(f"Login failed: Invalid password for user {username}")
+                return False
 
-            # Store user information using QSettings
-            settings = QSettings("MyApp", "UserData")  # Replace with your app name
+            logging.info(f"User {username} logged in successfully")
+
+            # Cache user session data locally using QSettings
+            settings = QSettings("MyApp", "UserData")
             settings.setValue("id", result[1])
             settings.setValue("username", result[2])
             settings.setValue("firstname", result[3])
             settings.setValue("lastname", result[4])
             settings.setValue("email", result[5])
 
-            return True  # User information stored successfully
+            return True
 
         except Exception as e:
-            print(f"Error during login and store: {e}")
+            logging.error(f"Login error for user {username}: {e}", exc_info=True)
             return False
 
     @pyqtSlot(result=bool)
@@ -77,12 +92,22 @@ class UserManager(QObject):
 
     @pyqtSlot(str, str, str, str, str, result=bool)
     def signup(self, username, password, firstname, lastname, email):
-        """Sign up a new user with the given details."""
+        """Sign up a new user with the given details.
+
+        Args:
+            username: Desired login name
+            password: Plain text password to be hashed
+            firstname: User's first name
+            lastname: User's last name
+            email: User's email address
+
+        Returns:
+            bool: True if signup successful, False if username taken or other error
+        """
         try:
-            # Hash the password before storing
             hashed_password = self._hash_password(password)
 
-            # Insert the new user into the users table
+            # Attempt to create new user record
             query = (
                 "INSERT INTO users "
                 "(username, password, firstname, lastname, email) "
@@ -93,13 +118,11 @@ class UserManager(QObject):
                 (username, hashed_password, firstname, lastname, email),
             )
             self.db.connection.commit()
-            return True  # Signup successful
+            return True
         except sqlite3.IntegrityError:
-            # This error occurs if the username already exists
-            return False  # Signup failed due to username already taken
-        except Exception as e:
-            print(f"An error occurred during signup: {e}")
-            return False  # Signup failed due to an unexpected error
+            return False  # Username already exists
+        except Exception:
+            return False  # Silently fail on other errors
 
     @pyqtSlot(result=bool)
     def is_user_logged_in(self) -> bool:
@@ -109,7 +132,11 @@ class UserManager(QObject):
 
     @pyqtSlot(result=str)
     def get_user_data(self) -> str:
-        """Check if user data exists in QSettings."""
+        """Retrieve cached user data from local settings.
+
+        Returns:
+            str: JSON string containing user's first name, last name and ID
+        """
         settings = QSettings("MyApp", "UserData")
         data = {
             "firstName": settings.value("firstname"),
